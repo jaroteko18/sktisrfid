@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"log"
 	db "sktisrfid/pkg/database"
 	"time"
@@ -46,8 +45,6 @@ func ListAbsent(data map[string]interface{}) (res []ListAbsenteeism) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(list)
-
 		res = append(res, list)
 	}
 	err = rows.Err()
@@ -58,19 +55,3 @@ func ListAbsent(data map[string]interface{}) (res []ListAbsenteeism) {
 	return
 
 }
-
-// func TestRFID(list map[string]interface{}) string {
-// 	st := []Test{}
-// 	row := db.DB.Selec .QueryRow(&st, "SELECT RFIDID, EmployeeID FROM [MstRFID]")
-// 	fmt.Println(row)
-// 	p := new(Person)
-// 	err := row.Scan(&p.RFIDID)
-// 	if err != nil {
-// 		fmt.Println("empid", empid)
-// 		fmt.Println("err=>", err)
-// 		return "Gagal dapat data"
-// 	} else {
-// 		fmt.Println(p)
-// 		return p.RFIDID
-// 	}
-// }

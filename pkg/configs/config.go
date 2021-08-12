@@ -14,7 +14,6 @@ type Config struct {
 }
 
 func GetConfig() Config {
-
 	file, _ := os.Open("config.json")
 	defer file.Close()
 	decoder := json.NewDecoder(file)
@@ -23,12 +22,10 @@ func GetConfig() Config {
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-
 	return configuration
 }
 
 func (c Config) GetMyConnectionInfo() string {
-
 	return fmt.Sprintf(
 		"server=%s;user id=%s;password=%s;database=%s",
 		c.Server, c.User, c.Password, c.Database)

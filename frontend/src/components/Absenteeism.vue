@@ -217,12 +217,7 @@ export default {
         AbsentDate: this.$route.params.period,
         AbsentType: this.$route.params.absenttype 
       }
-      window.backend.RFID.GetListAbsenteeism(params).then(result => {
-        this.list = result
-        this.totalRows = this.list.length
-        this.toggleBusy()
-      });
-
+      // === BEFORE
       // axios.get('http://localhost:9090/id/RFIDAPI/GetListAbsenteeism',{
       //   params: {
       //     AbsentDate: this.$route.params.period,
@@ -233,6 +228,12 @@ export default {
       //   this.totalRows = this.list.length
       //   this.toggleBusy()
       // })
+      // === AFTER
+      window.backend.RFID.GetListAbsenteeism(params).then(result => {
+        this.list = result
+        this.totalRows = this.list.length
+        this.toggleBusy()
+      });
     },
 
     validate(){
