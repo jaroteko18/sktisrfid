@@ -118,7 +118,11 @@ export default {
         { key: 'LocationCode', label: 'Location', sortable: false, class: 'text-center' },
         { key: 'GroupCode', label: 'Group', sortable: false, class: 'text-center' },
         { key: 'UnitCode', label: 'Unit', sortable: false, class: 'text-center' },
-        { key: 'CreatedDate', label: 'Created Date', sortable: false, class: 'text-center' },
+        { key: 'CreatedDate', label: 'Created Date', sortable: false, class: 'text-center',
+          formatter: (value, key, item) => {
+              return moment(value).format("YYYY-MM-DD hh:mm:ss")
+          } 
+        },
         { key: 'actions', label: 'Actions', sortable: false, class: 'text-center' }
         
       ],
@@ -209,16 +213,26 @@ export default {
     
     load(){
       this.toggleBusy()
-      axios.get('http://localhost:9090/id/RFIDAPI/GetListAbsenteeism',{
-        params: {
-          AbsentDate: this.$route.params.period,
-          AbsentType: this.$route.params.absenttype 
-        }
-      }).then(resp => {
-        this.list = resp.data.data
+      var params = {
+        AbsentDate: this.$route.params.period,
+        AbsentType: this.$route.params.absenttype 
+      }
+      window.backend.RFID.GetListAbsenteeism(params).then(result => {
+        this.list = result
         this.totalRows = this.list.length
         this.toggleBusy()
-      })
+      });
+
+      // axios.get('http://localhost:9090/id/RFIDAPI/GetListAbsenteeism',{
+      //   params: {
+      //     AbsentDate: this.$route.params.period,
+      //     AbsentType: this.$route.params.absenttype 
+      //   }
+      // }).then(resp => {
+      //   this.list = resp.data.data
+      //   this.totalRows = this.list.length
+      //   this.toggleBusy()
+      // })
     },
 
     validate(){

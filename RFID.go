@@ -2,6 +2,7 @@ package main
 
 import (
 	// "fmt"
+
 	ctl "sktisrfid/pkg/controllers"
 	db "sktisrfid/pkg/database"
 
@@ -22,9 +23,8 @@ func NewRFID() (*RFID, error) {
 	return result, nil
 }
 
-func (t *RFID) GetEmployee(empid string) string {
-	defer db.DB.Close()
-	return ctl.GetListAbsenteeism(empid)
+func (t *RFID) GetListAbsenteeism(data map[string]interface{}) []ctl.ListAbsenteeism {
+	return ctl.ListAbsent(data)
 }
 
 func (t *RFID) WailsInit(runtime *wails.Runtime) error {
