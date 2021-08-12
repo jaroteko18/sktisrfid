@@ -1,0 +1,52 @@
+{
+  "data": [
+    {
+      "id": 1,
+      "RFIDID": "12989123",
+      "EmployeeID": "213104",
+      "EmployeeNumber": "2213104",
+      "EmployeeName": "Jarot",
+      "LocationCode": "ID21",
+      "GroupCode": "2131",
+      "UnitCode": "2027",
+      "ProdCapacity":40,
+      "ProdTarget":40
+    },
+    {
+      "id": 2,
+      "RFIDID": "12989122",
+      "EmployeeID": "213101",
+      "EmployeeNumber": "2213105",
+      "EmployeeName": "Wawan",
+      "LocationCode": "ID22",
+      "GroupCode": "2132",
+      "UnitCode": "2024",
+      "ProdCapacity":40,
+      "ProdTarget":40
+    },
+    {
+      "id": 3,
+      "RFIDID": "129891222",
+      "EmployeeID": "2131012",
+      "EmployeeNumber": "22131052",
+      "EmployeeName": "Wawan2",
+      "LocationCode": "ID222",
+      "GroupCode": "21322",
+      "UnitCode": "20242",
+      "ProdCapacity":40,
+      "ProdTarget":40
+    },
+    {
+      "id": 4,
+      "RFIDID": "16321016420",
+      "EmployeeID": "1",
+      "EmployeeNumber": "1",
+      "EmployeeName": "1",
+      "LocationCode": "1",
+      "GroupCode": "1",
+      "UnitCode": "1",
+      "ProdCapacity":40,
+      "ProdTarget":40
+    }
+  ]
+}

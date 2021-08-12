@@ -1,0 +1,59 @@
+{
+  "name": "cpustats",
+  "author": "Alex<a.pliutau@gmail.com>",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@wailsapp/runtime": "^1.1.1",
+    "axios": "^0.21.1",
+    "bootstrap": "^5.0.2",
+    "bootstrap-icons": "^1.5.0",
+    "bootstrap-vue": "^2.21.2",
+    "core-js": "^2.6.4",
+    "json-server": "^0.16.3",
+    "moment": "^2.29.1",
+    "vue": "^2.6.14",
+    "vue-router": "^3.5.2",
+    "vue2-datepicker": "^3.9.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.4.0",
+    "@vue/cli-plugin-eslint": "^3.1.1",
+    "@vue/cli-service": "^3.12.1",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "eventsource-polyfill": "^0.9.6",
+    "vue-loader": "^15.5.1",
+    "vue-template-compiler": "^2.6.14",
+    "webpack-hot-middleware": "^2.24.3"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "rules": {},
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ]
+}
