@@ -63,7 +63,7 @@
         </small>
 
         <h3>{{message}}</h3>
-        <a @click="getMessage">Press Me!</a>
+        <button @click="getMessage">Press Me!</button>
       </form>
     </div>
   </div>
@@ -90,14 +90,15 @@
       
     },
     methods:{
-      getMessage: function() {
-        var self = this;
+      getMessage() {
+        this.message = "wawan"
+        // var self = this;
         // window.backend.basic('307820').then(result => {
         //   self.message = result;
         // });
-        window.backend.RFID.GetEmployee('307820').then(result => {
-          self.message = result;
-        });
+        // window.backend.RFID.GetEmployee('307820').then(result => {
+        //   self.message = result;
+        // });
       },
       countDownChanged(dismissCountDown) {
         this.dismissCountDown = dismissCountDown
