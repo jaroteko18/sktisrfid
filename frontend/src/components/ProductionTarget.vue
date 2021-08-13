@@ -146,7 +146,11 @@ export default {
         { key: 'UnitCode', label: 'Unit', sortable: false, class: 'text-center' },
         { key: 'ProdCapacity', label: 'Capacity', sortable: false, class: 'text-center' },
         { key: 'ProdTarget', label: 'Target', sortable: false, class: 'text-center' },
-        { key: 'CreatedDate', label: 'Created Date', sortable: false, class: 'text-center' },
+        { key: 'CreatedDate', label: 'Created Date', sortable: false, class: 'text-center',
+          formatter: (value, key, item) => {
+              return moment(value).format("YYYY-MM-DD hh:mm:ss")
+          } 
+        },
         { key: 'actions', label: 'Actions', sortable: false, class: 'text-center' }
       ],
       form:{
@@ -266,15 +270,27 @@ export default {
 
     load(){
       this.toggleBusy()
-      axios.get('http://localhost:9090/id/RFIDAPI/GetListProductionTarget',{
-        params: {
-          ProductionDate: this.$route.params.period
+      var params = {
+        ProductionDate: this.$route.params.period
+      }
+      // === BEFORE
+      // axios.get('http://localhost:9090/id/RFIDAPI/GetListProductionTarget',{
+      //   params: {
+      //     ProductionDate: this.$route.params.period
+      //   }
+      // }).then(resp => {
+      //   this.list = resp.data.data
+      //   this.totalRows = this.list.length
+      //   this.toggleBusy()
+      // })
+      // === AFTER
+      window.backend.RFID.GetListProductionTarget(params).then(result => {
+        if(result != null){
+          this.list = result
+          this.totalRows = (result == null)?this.totalRows:this.list.length
         }
-      }).then(resp => {
-        this.list = resp.data.data
-        this.totalRows = this.list.length
-        this.toggleBusy()
-      })
+      });
+      this.toggleBusy()
     },
 
     validate(){

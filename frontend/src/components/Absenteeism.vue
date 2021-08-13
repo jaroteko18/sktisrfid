@@ -230,10 +230,12 @@ export default {
       // })
       // === AFTER
       window.backend.RFID.GetListAbsenteeism(params).then(result => {
-        this.list = result
-        this.totalRows = this.list.length
-        this.toggleBusy()
+        if(result != null){
+          this.list = result
+          this.totalRows = (result == null)?this.totalRows:this.list.length
+        }
       });
+      this.toggleBusy()
     },
 
     validate(){

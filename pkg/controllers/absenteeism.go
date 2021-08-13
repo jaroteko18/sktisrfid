@@ -38,20 +38,24 @@ func ListAbsent(data map[string]interface{}) (res []ListAbsenteeism) {
 		"on EP.EmployeeID=MR.EmployeeID "+
 		"Where IsActive=1 and IsFromRFID=1 "+
 		"and AbsentType=$1 and StartDateAbsent>=$2 and EndDateAbsent<=$2;", payload.AbsentType, payload.AbsentDate)
-
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 	for rows.Next() {
 		list := ListAbsenteeism{}
 		err = rows.Scan(&list.RFIDID, &list.EmployeeID, &list.EmployeeNumber, &list.EmployeeName, &list.LocationCode, &list.GroupCode, &list.UnitCode, &list.CreatedDate)
 		if err != nil {
 			log.Fatal(err)
+			return
 		}
 		res = append(res, list)
 	}
 	err = rows.Err()
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
-
 	return
 
 }

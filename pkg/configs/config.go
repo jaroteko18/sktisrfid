@@ -14,6 +14,7 @@ type Config struct {
 }
 
 func GetConfig() Config {
+	// file, _ := os.Open("//pmiidsubdev33/invdashboard$/rfid/config.json")
 	file, _ := os.Open("config.json")
 	defer file.Close()
 	decoder := json.NewDecoder(file)

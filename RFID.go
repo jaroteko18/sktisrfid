@@ -23,6 +23,10 @@ func NewRFID() (*RFID, error) {
 	return result, nil
 }
 
+func (t *RFID) GetListProductionTarget(data map[string]interface{}) []ctl.ListProductionTarget {
+	return ctl.ListProdTarget(data)
+}
+
 func (t *RFID) GetListAbsenteeism(data map[string]interface{}) []ctl.ListAbsenteeism {
 	return ctl.ListAbsent(data)
 }
@@ -35,4 +39,9 @@ func (t *RFID) WailsInit(runtime *wails.Runtime) error {
 
 	t.runtime.Window.SetTitle("SKTISRFID")
 	return nil
+}
+
+func (t *RFID) WailsShutdown() {
+	defer db.DB.Close()
+	// De-Allocate some resources...
 }
