@@ -26,6 +26,7 @@ type ListAbsenteeism struct {
 	CreatedDate    time.Time
 }
 
+
 func ListAbsent(data map[string]interface{}) (res []ListAbsenteeism) {
 	var payload PayloadAbsenteeism
 	payload.AbsentDate = data["AbsentDate"].(string)

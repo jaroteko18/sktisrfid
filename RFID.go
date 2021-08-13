@@ -23,6 +23,10 @@ func NewRFID() (*RFID, error) {
 	return result, nil
 }
 
+func (t *RFID) ValidateRFID(data map[string]interface{}) ctl.ResponseValidate {
+	return ctl.Validate(data)
+}
+
 func (t *RFID) GetListProductionTarget(data map[string]interface{}) []ctl.ListProductionTarget {
 	return ctl.ListProdTarget(data)
 }

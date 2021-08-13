@@ -230,6 +230,7 @@ export default {
       // })
       // === AFTER
       window.backend.RFID.GetListAbsenteeism(params).then(result => {
+        console.log(result)
         if(result != null){
           this.list = result
           this.totalRows = (result == null)?this.totalRows:this.list.length
@@ -239,30 +240,39 @@ export default {
     },
 
     validate(){
-      axios.get('http://localhost:9090/id/RFIDAPI/ValidateRFID',{
-        params: {
-          Date: this.$route.params.period,
-          AbsentType: 'Absenteeism', 
-          RFIDID: this.form.RFIDID
-        }
-      }).then(resp => {
-        if(resp.data.status=="success"){
-          resp.data.data.CreatedDate = moment().format('YYYY-MM-DD hh:mm:ss')
-          resp.data.data.AbsentDate = this.$route.params.period
-          resp.data.data.AbsentType = this.$route.params.absenttype 
-          this.listValidate=resp.data.data
-          this.listInsert.push(this.listValidate)
-          this.list.unshift(this.listValidate)
-          console.log(this.list)
-          this.validateVarian='info'
-          this.messageValidate='RFID '+resp.data.data.RFIDID+' - '+resp.data.data.EmployeeName
-          this.dismissCountDown = this.dismissSecs
-        }else{
-          this.validateVarian='danger'
-          this.messageValidate=resp.data.message
-          this.dismissCountDown = this.dismissSecs
-        }
-      })
+      var params = {
+        Date: this.$route.params.period,
+        AbsentType: 'Absenteeism', 
+        RFIDID: this.form.RFIDID
+      }
+      window.backend.RFID.ValidateRFID(params).then(result => {
+        console.log(result)
+      });
+
+      // axios.get('http://localhost:9090/id/RFIDAPI/ValidateRFID',{
+      //   params: {
+      //     Date: this.$route.params.period,
+      //     AbsentType: 'Absenteeism', 
+      //     RFIDID: this.form.RFIDID
+      //   }
+      // }).then(resp => {
+      //   if(resp.data.status=="success"){
+      //     resp.data.data.CreatedDate = moment().format('YYYY-MM-DD hh:mm:ss')
+      //     resp.data.data.AbsentDate = this.$route.params.period
+      //     resp.data.data.AbsentType = this.$route.params.absenttype 
+      //     this.listValidate=resp.data.data
+      //     this.listInsert.push(this.listValidate)
+      //     this.list.unshift(this.listValidate)
+      //     console.log(this.list)
+      //     this.validateVarian='info'
+      //     this.messageValidate='RFID '+resp.data.data.RFIDID+' - '+resp.data.data.EmployeeName
+      //     this.dismissCountDown = this.dismissSecs
+      //   }else{
+      //     this.validateVarian='danger'
+      //     this.messageValidate=resp.data.message
+      //     this.dismissCountDown = this.dismissSecs
+      //   }
+      // })
     },
     save(){
       this.hasSubmitted=true
