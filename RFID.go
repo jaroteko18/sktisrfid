@@ -3,7 +3,7 @@ package main
 import (
 	// "fmt"
 
-	ctl "sktisrfid/pkg/controllers"
+	. "sktisrfid/pkg/controllers"
 	db "sktisrfid/pkg/database"
 
 	"github.com/wailsapp/wails"
@@ -23,16 +23,22 @@ func NewRFID() (*RFID, error) {
 	return result, nil
 }
 
-func (t *RFID) ValidateRFID(data map[string]interface{}) ctl.ResponseValidate {
-	return ctl.Validate(data)
+// type ResponseValidate2 struct {
+// 	message string
+// 	data    DetailRFID
+// 	status  string
+// }
+
+func (t *RFID) ValidateRFID(data map[string]interface{}) ResponseValidate {
+	return ValidateItem(data)
 }
 
-func (t *RFID) GetListProductionTarget(data map[string]interface{}) []ctl.ListProductionTarget {
-	return ctl.ListProdTarget(data)
+func (t *RFID) GetListProductionTarget(data map[string]interface{}) []ListProductionTarget {
+	return ListProdTarget(data)
 }
 
-func (t *RFID) GetListAbsenteeism(data map[string]interface{}) []ctl.ListAbsenteeism {
-	return ctl.ListAbsent(data)
+func (t *RFID) GetListAbsenteeism(data map[string]interface{}) []ListAbsenteeism {
+	return ListAbsent(data)
 }
 
 func (t *RFID) WailsInit(runtime *wails.Runtime) error {

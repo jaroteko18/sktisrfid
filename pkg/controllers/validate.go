@@ -37,61 +37,57 @@ type MasterRFID struct {
 }
 
 type ResponseValidate struct {
-	message string     `json:"message"`
-	data    DetailRFID `json:"DetailRFID"`
-	status  string     `json:"status"`
+	Message string
+	Data    DetailRFID
+	Status  string
 }
 
-func Validate(data map[string]interface{}) (res ResponseValidate) {
+func ValidateItem(data map[string]interface{}) (res ResponseValidate) {
 	var payload PayloadValidate
 	payload.Date = data["Date"].(string)
 	payload.AbsentType = data["AbsentType"].(string)
 	payload.RFIDID = data["RFIDID"].(string)
 
 	listMst := MasterRFID{}
-	err := db.DB.QueryRow("SELECT RFIDID, EmployeeID, NoPengenal as EmployeeNumber, "+
+	err := db.DB.QueryRow("SELECT RFIDID, EmployeeID, NoPengenal as EmployeeNumber, EmployeeName, "+
 		"Plant as LocationCode, Unit as UnitCode, [Group] as GroupCode "+
 		"FROM MstRFID WHERE RFIDID=$1", payload.RFIDID).Scan(&listMst.RFIDID, &listMst.EmployeeID, &listMst.EmployeeNumber,
-		&listMst.LocationCode, &listMst.UnitCode, &listMst.GroupCode)
+		&listMst.EmployeeName, &listMst.LocationCode, &listMst.UnitCode, &listMst.GroupCode)
 	if err != nil {
 		if err != sql.ErrNoRows {
 			log.Print(err)
 		}
-		res.message = "Data not found !"
-		res.status = "error"
-		res.data = DetailRFID{}
+		res.Message = "Data not found !"
+		res.Status = "error"
+		res.Data = DetailRFID{}
 		return
 	}
 
 	list := DetailRFID{}
-	err = db.DB.QueryRow("select RFIDID,EP.EmployeeID,EmployeeNumber,EmployeeName, "+
+	err = db.DB.QueryRow("select EP.EmployeeID,EmployeeNumber,EmployeeName, "+
 		"Plant as LocationCode,[Group] as GroupCode,Unit as UnitCode,null as ProdCapacity,null as ProdTarget "+
 		"from ExePlantWorkerAbsenteeism EP "+
-		"inner join MstRFID MR "+
-		"on EP.EmployeeID=MR.EmployeeID "+
-		"Where IsActive=1 and IsFromRFID=1 "+
-		"and AbsentType='Alpa' and StartDateAbsent>=$1 and EndDateAbsent<=$1 and RFIDID=$2 "+
+		"Where IsFromRFID=1 and EP.EmployeeID=$2 "+
+		"and AbsentType='Alpa' and StartDateAbsent>=$1 and EndDateAbsent<=$1 "+
 		"UNION ALL "+
-		"SELECT RFIDID,PE.EmployeeID,EmployeeNumber,EmployeeName, Plant as LocationCode, "+
+		"SELECT PE.EmployeeID,EmployeeNumber,EmployeeName, Plant as LocationCode, "+
 		"[Group] as GroupCode,Unit as UnitCode, ProdCapacity, ProdTarget "+
 		"FROM ExePlantProductionEntryVerification PV "+
 		"INNER JOIN ExePlantProductionEntry PE "+
 		"ON PV.ProductionEntryCode=PE.ProductionEntryCode "+
-		"INNER JOIN MstRFID MR "+
-		"ON PE.EmployeeID=MR.EmployeeID "+
-		"WHERE IsFromRFID=1 and IsActive=1 "+
-		"AND ProductionDate=$1 and RFIDID=$2", payload.Date, payload.RFIDID).Scan(&list.RFIDID, &list.EmployeeID,
+		"WHERE IsFromRFID=1 and EP.EmployeeID=$2 "+
+		"AND ProductionDate=$1 ", payload.Date, listMst.EmployeeID).Scan(&list.RFIDID, &list.EmployeeID,
 		&list.EmployeeNumber, &list.EmployeeName, &list.LocationCode, &list.GroupCode,
 		&list.UnitCode, &list.ProdCapacity, &list.ProdTarget)
 	if err != nil {
 		// data not found
 	} else {
-		res.message = "Data exist !"
-		res.status = "error"
+		res.Message = "Data exist !"
+		res.Status = "error"
 		return
 	}
-	res.message = "Data was successfully validated !"
-	res.status = "success"
+	res.Message = "Data was successfully validated !"
+	res.Status = "success"
 	det := DetailRFID{}
 	det.RFIDID = listMst.RFIDID
 	det.EmployeeID = listMst.EmployeeID
@@ -101,7 +97,6 @@ func Validate(data map[string]interface{}) (res ResponseValidate) {
 	det.GroupCode = listMst.GroupCode
 	det.UnitCode = listMst.UnitCode
 	det.ProdCapacity = list.ProdCapacity
-	res.data = det
-
+	res.Data = det
 	return
 }

@@ -217,18 +217,6 @@ export default {
         AbsentDate: this.$route.params.period,
         AbsentType: this.$route.params.absenttype 
       }
-      // === BEFORE
-      // axios.get('http://localhost:9090/id/RFIDAPI/GetListAbsenteeism',{
-      //   params: {
-      //     AbsentDate: this.$route.params.period,
-      //     AbsentType: this.$route.params.absenttype 
-      //   }
-      // }).then(resp => {
-      //   this.list = resp.data.data
-      //   this.totalRows = this.list.length
-      //   this.toggleBusy()
-      // })
-      // === AFTER
       window.backend.RFID.GetListAbsenteeism(params).then(result => {
         console.log(result)
         if(result != null){
@@ -245,34 +233,24 @@ export default {
         AbsentType: 'Absenteeism', 
         RFIDID: this.form.RFIDID
       }
-      window.backend.RFID.ValidateRFID(params).then(result => {
-        console.log(result)
+      window.backend.RFID.ValidateRFID(params).then(resp => {
+        if(resp.Status=="success"){
+          resp.Data.CreatedDate = moment().format('YYYY-MM-DD hh:mm:ss')
+          resp.Data.AbsentDate = this.$route.params.period
+          resp.Data.AbsentType = this.$route.params.absenttype 
+          this.listValidate=resp.Data
+          this.listInsert.push(this.listValidate)
+          this.list.unshift(this.listValidate)
+          console.log(this.list)
+          this.validateVarian='info'
+          this.messageValidate='RFID '+resp.Data.RFIDID+' - '+resp.Data.EmployeeName
+          this.dismissCountDown = this.dismissSecs
+        }else{
+          this.validateVarian='danger'
+          this.messageValidate=resp.Message
+          this.dismissCountDown = this.dismissSecs
+        }
       });
-
-      // axios.get('http://localhost:9090/id/RFIDAPI/ValidateRFID',{
-      //   params: {
-      //     Date: this.$route.params.period,
-      //     AbsentType: 'Absenteeism', 
-      //     RFIDID: this.form.RFIDID
-      //   }
-      // }).then(resp => {
-      //   if(resp.data.status=="success"){
-      //     resp.data.data.CreatedDate = moment().format('YYYY-MM-DD hh:mm:ss')
-      //     resp.data.data.AbsentDate = this.$route.params.period
-      //     resp.data.data.AbsentType = this.$route.params.absenttype 
-      //     this.listValidate=resp.data.data
-      //     this.listInsert.push(this.listValidate)
-      //     this.list.unshift(this.listValidate)
-      //     console.log(this.list)
-      //     this.validateVarian='info'
-      //     this.messageValidate='RFID '+resp.data.data.RFIDID+' - '+resp.data.data.EmployeeName
-      //     this.dismissCountDown = this.dismissSecs
-      //   }else{
-      //     this.validateVarian='danger'
-      //     this.messageValidate=resp.data.message
-      //     this.dismissCountDown = this.dismissSecs
-      //   }
-      // })
     },
     save(){
       this.hasSubmitted=true
