@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"log"
 	db "sktisrfid/pkg/database"
 	"time"
@@ -10,9 +11,17 @@ type Person struct {
 	RFIDID string
 }
 
+type PayloadInsertDelete struct {
+	insert []PayloadAbsenteeism
+	delete []PayloadAbsenteeism
+}
+
 type PayloadAbsenteeism struct {
-	AbsentDate string
-	AbsentType string
+	AbsentDate  string
+	AbsentType  string
+	RFIDID      string
+	EmployeeID  string
+	CreatedDate string
 }
 
 type ListAbsenteeism struct {
@@ -25,7 +34,6 @@ type ListAbsenteeism struct {
 	UnitCode       string
 	CreatedDate    time.Time
 }
-
 
 func ListAbsent(data map[string]interface{}) (res []ListAbsenteeism) {
 	var payload PayloadAbsenteeism
@@ -59,4 +67,46 @@ func ListAbsent(data map[string]interface{}) (res []ListAbsenteeism) {
 	}
 	return
 
+}
+
+func InsertDeleteAbsent(data map[string]interface{}) string {
+	var payload PayloadInsertDelete
+
+	ParamInsert, _ := json.Marshal(data["insert"])
+	if err := json.Unmarshal(ParamInsert, &payload.insert); err != nil {
+		log.Fatal(err)
+		return "error"
+	}
+
+	ParamDelete, _ := json.Marshal(data["delete"])
+	if err := json.Unmarshal(ParamDelete, &payload.delete); err != nil {
+		log.Fatal(err)
+		return "error"
+	}
+
+	if payload.delete != nil {
+		for i := 0; i < len(payload.delete); i++ {
+
+			_, err := db.DB.Query("EXEC DELETE_WORKER_ABSENTEEISM_RFID @AbsentDate = $1 ,@AbsentType = $2, @RFIDID = $3, @EmployeeID = $4, @CreatedDate = $5, @CreatedBy = $6, @UpdatedBy = $7, @UpdatedDate = $8", payload.delete[i].AbsentDate, payload.delete[i].AbsentType, payload.delete[i].RFIDID, payload.delete[i].EmployeeID, payload.delete[i].CreatedDate, "RFID", "RFID", payload.delete[i].CreatedDate)
+
+			if err != nil {
+				log.Fatal(err)
+				return "error"
+			}
+
+		}
+	}
+
+	if payload.insert != nil {
+		for i := 0; i < len(payload.insert); i++ {
+			_, err := db.DB.Query("EXEC INSERT_WORKER_ABSENTEEISM_RFID @AbsentDate = $1 ,@AbsentType = $2, @RFIDID = $3, @EmployeeID = $4, @CreatedDate = $5, @CreatedBy = $6, @UpdatedBy = $7, @UpdatedDate = $8", payload.insert[i].AbsentDate, payload.insert[i].AbsentType, payload.insert[i].RFIDID, payload.insert[i].EmployeeID, payload.insert[i].CreatedDate, "RFID", "RFID", payload.insert[i].CreatedDate)
+
+			if err != nil {
+				log.Fatal(err)
+				return "error"
+			}
+		}
+	}
+
+	return "success"
 }

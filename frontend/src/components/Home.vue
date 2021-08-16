@@ -92,10 +92,73 @@
     methods:{
       getMessage() {
         this.message = "wawan"
-        // var self = this;
-        // window.backend.basic('307820').then(result => {
+        var self = this;      
+        var param = {
+          delete : [
+            //  {
+            //     RFIDID: "12",
+            //     EmployeeID: "324177",
+            //     AbsentDate: "2021-07-30",
+            //     AbsentType: "Ijin",
+            //     CreatedDate: "2021-07-30 12:34:56",
+            // },
+            // {
+            //     RFIDID: "11",
+            //     EmployeeID: "308360",
+            //     AbsentDate: "2021-07-30",
+            //     AbsentType: "Alpa",
+            //     CreatedDate: "2021-07-30 12:50:50",
+            // }
+          ],
+          update :  [
+              //  {
+              //     RFIDID: "12",
+              //     EmployeeID: "300124",
+              //     ProductionDate: "2021-07-22",
+              //     CreatedDate: "2021-07-21 12:34:56",
+              //     ProdTarget: 10
+              // },
+              // {
+              //     RFIDID: "11",
+              //     EmployeeID: "300092",
+              //     ProductionDate: "2021-07-22",
+              //     CreatedDate: "2021-07-22 1:34:56",
+              //     ProdTarget: 20
+              // }
+            ],
+
+          insert : [
+             {
+                RFIDID: "12",
+                EmployeeID: "324177",
+                AbsentDate: "2021-07-30",
+                AbsentType: "Ijin",
+                CreatedDate: "2021-07-30 12:34:56",
+            },
+            {
+                RFIDID: "11",
+                EmployeeID: "308360",
+                AbsentDate: "2021-07-30",
+                AbsentType: "Alpa",
+                CreatedDate: "2021-07-30 12:50:50",
+            }
+
+          ]
+            
+        };
+        
+              
+        window.backend.RFID.RFIDAbsenteeism(param).then(result => {
+          console.log(result);
+          self.message = result;
+        });
+        
+        // window.backend.RFID.UpdateDeleteRFIDProductionTarget(param).then(result => {
+        //   console.log(result);
         //   self.message = result;
         // });
+
+
         // window.backend.RFID.GetEmployee('307820').then(result => {
         //   self.message = result;
         // });

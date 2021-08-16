@@ -41,6 +41,14 @@ func (t *RFID) GetListAbsenteeism(data map[string]interface{}) []ListAbsenteeism
 	return ListAbsent(data)
 }
 
+func (t *RFID) RFIDProductionTarget(data map[string]interface{}) string {
+	return UpdateDeleteRFIDProductionTarget(data)
+}
+
+func (t *RFID) RFIDAbsenteeism(data map[string]interface{}) string {
+	return InsertDeleteAbsent(data)
+}
+
 func (t *RFID) WailsInit(runtime *wails.Runtime) error {
 	db.ConnectMySQL()
 	t.runtime = runtime
