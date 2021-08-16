@@ -81,6 +81,11 @@ func ValidateItem(data map[string]interface{}) (res ResponseValidate) {
 		&list.UnitCode, &list.ProdCapacity, &list.ProdTarget)
 	if err != nil {
 		// data not found
+		if payload.AbsentType == "ProductionTarget" {
+			res.Message = "Data not found !"
+			res.Status = "error"
+			return
+		}
 	} else {
 		res.Message = "Data exist !"
 		res.Status = "error"

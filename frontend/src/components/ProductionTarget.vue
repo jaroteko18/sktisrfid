@@ -294,25 +294,44 @@ export default {
     },
 
     validate(){
-      axios.get('http://localhost:9090/id/RFIDAPI/ValidateRFID',{
-        params: {
+      var params = {
           Date: this.$route.params.period,
           AbsentType: 'ProductionTarget', 
           RFIDID: this.form.RFIDID
         }
-      }).then(resp => {
-        if(resp.data.status=="success"){
+      window.backend.RFID.ValidateRFID(params).then(resp => {
+       if(resp.Status=="success"){
           this.$bvModal.show('modal-prevent-closing')
 
-          resp.data.data.CreatedDate = moment().format('YYYY-MM-DD hh:mm:ss')
-          resp.data.data.ProductionDate = this.$route.params.period
-          this.listValidate=resp.data.data
+          resp.Data.CreatedDate = moment().format('YYYY-MM-DD hh:mm:ss')
+          resp.Data.ProductionDate = this.$route.params.period
+          this.listValidate=resp.Data
         }else{
           this.validateVarian='danger'
-          this.messageValidate=resp.data.message
+          this.messageValidate=resp.Message
           this.dismissCountDown = this.dismissSecs
         }
-      })
+      });
+
+      // axios.get('http://localhost:9090/id/RFIDAPI/ValidateRFID',{
+      //   params: {
+      //     Date: this.$route.params.period,
+      //     AbsentType: 'ProductionTarget', 
+      //     RFIDID: this.form.RFIDID
+      //   }
+      // }).then(resp => {
+      //   if(resp.data.status=="success"){
+      //     this.$bvModal.show('modal-prevent-closing')
+
+      //     resp.data.data.CreatedDate = moment().format('YYYY-MM-DD hh:mm:ss')
+      //     resp.data.data.ProductionDate = this.$route.params.period
+      //     this.listValidate=resp.data.data
+      //   }else{
+      //     this.validateVarian='danger'
+      //     this.messageValidate=resp.data.message
+      //     this.dismissCountDown = this.dismissSecs
+      //   }
+      // })
       
       
       
