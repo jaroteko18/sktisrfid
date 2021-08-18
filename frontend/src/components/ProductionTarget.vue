@@ -42,7 +42,7 @@
             <template #modal-header="{}">
               <h5>{{infoModal.title}}</h5>
             </template>
-            Delete the RFID <b>{{ infoModal.content.RFIDID }}</b> ?
+            Delete the data <b>{{ infoModal.content.EmployeeName }}</b> ?
           </b-modal>
 
           <b-row>
@@ -345,6 +345,7 @@ export default {
         delete:this.listDelete
       };
 
+      console.log(payload)
       window.backend.RFID.RFIDProductionTarget(payload).then(resp => {
         if(resp.Status=="success"){
           this.hasSubmitted=false

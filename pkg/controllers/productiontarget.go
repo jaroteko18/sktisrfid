@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	db "sktisrfid/pkg/database"
 	"time"
 )
@@ -16,7 +17,7 @@ type PayloadProductionTarget struct {
 	CreatedDate    string
 	RFIDID         string
 	EmployeeID     string
-	ProdTarget     float32
+	ProdTarget     string
 }
 
 type ListProductionTarget struct {
@@ -69,6 +70,7 @@ func ListProdTarget(data map[string]interface{}) (res []ListProductionTarget) {
 }
 
 func UpdateDeleteRFIDProductionTarget(data map[string]interface{}) (res ResponseResult) {
+	fmt.Println(data)
 	var payload PayloadUpdateDelete
 	ParamUpdate, _ := json.Marshal(data["update"])
 	if err := json.Unmarshal(ParamUpdate, &payload.update); err != nil {
