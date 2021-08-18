@@ -69,18 +69,22 @@ func ListProdTarget(data map[string]interface{}) (res []ListProductionTarget) {
 
 }
 
-func UpdateDeleteRFIDProductionTarget(data map[string]interface{}) string {
+func UpdateDeleteRFIDProductionTarget(data map[string]interface{}) (res ResponseResult) {
 	var payload PayloadUpdateDelete
 	ParamUpdate, _ := json.Marshal(data["update"])
 	if err := json.Unmarshal(ParamUpdate, &payload.update); err != nil {
 		log.Fatal(err)
-		return "error"
+		res.Status = "error"
+		res.Message = err.Error()
+		return
 	}
 
 	ParamDelete, _ := json.Marshal(data["delete"])
 	if err := json.Unmarshal(ParamDelete, &payload.delete); err != nil {
 		log.Fatal(err)
-		return "error"
+		res.Status = "error"
+		res.Message = err.Error()
+		return
 	}
 
 	if payload.delete != nil {
@@ -90,7 +94,9 @@ func UpdateDeleteRFIDProductionTarget(data map[string]interface{}) string {
 
 			if err != nil {
 				log.Fatal(err)
-				return "error"
+				res.Status = "error"
+				res.Message = err.Error()
+				return
 			}
 
 		}
@@ -102,10 +108,15 @@ func UpdateDeleteRFIDProductionTarget(data map[string]interface{}) string {
 
 			if err != nil {
 				log.Fatal(err)
-				return "error"
+				res.Status = "error"
+				res.Message = err.Error()
+				return
 			}
 		}
 	}
 
-	return "success"
+	res.Status = "success"
+	res.Message = "Data was successfully saved !"
+
+	return
 }

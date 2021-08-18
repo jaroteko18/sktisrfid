@@ -35,6 +35,11 @@ type ListAbsenteeism struct {
 	CreatedDate    time.Time
 }
 
+type ResponseResult struct {
+	Status  string
+	Message string
+}
+
 func ListAbsent(data map[string]interface{}) (res []ListAbsenteeism) {
 	var payload PayloadAbsenteeism
 	payload.AbsentDate = data["AbsentDate"].(string)
@@ -69,19 +74,23 @@ func ListAbsent(data map[string]interface{}) (res []ListAbsenteeism) {
 
 }
 
-func InsertDeleteAbsent(data map[string]interface{}) string {
+func InsertDeleteAbsent(data map[string]interface{}) (res ResponseResult) {
 	var payload PayloadInsertDelete
 
 	ParamInsert, _ := json.Marshal(data["insert"])
 	if err := json.Unmarshal(ParamInsert, &payload.insert); err != nil {
 		log.Fatal(err)
-		return "error"
+		res.Status = "error"
+		res.Message = err.Error()
+		return
 	}
 
 	ParamDelete, _ := json.Marshal(data["delete"])
 	if err := json.Unmarshal(ParamDelete, &payload.delete); err != nil {
 		log.Fatal(err)
-		return "error"
+		res.Status = "error"
+		res.Message = err.Error()
+		return
 	}
 
 	if payload.delete != nil {
@@ -91,7 +100,10 @@ func InsertDeleteAbsent(data map[string]interface{}) string {
 
 			if err != nil {
 				log.Fatal(err)
-				return "error"
+				res.Status = "error"
+				res.Message = err.Error()
+				return
+
 			}
 
 		}
@@ -103,10 +115,15 @@ func InsertDeleteAbsent(data map[string]interface{}) string {
 
 			if err != nil {
 				log.Fatal(err)
-				return "error"
+				res.Status = "error"
+				res.Message = err.Error()
+				return
 			}
 		}
 	}
 
-	return "success"
+	res.Status = "success"
+	res.Message = "Data was successfully saved !"
+
+	return
 }
