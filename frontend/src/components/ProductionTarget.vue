@@ -347,15 +347,15 @@ export default {
 
       window.backend.RFID.RFIDProductionTarget(payload).then(resp => {
         if(resp.Status=="success"){
-        this.hasSubmitted=false
+          this.hasSubmitted=false
 
-        this.validateVarian='success'
-        this.messageValidate=resp.Message
-        this.dismissCountDown = this.dismissSecs
+          this.validateVarian='success'
+          this.messageValidate=resp.Message
+          this.dismissCountDown = this.dismissSecs
 
-        this.load();
-        this.listUpdate=[]
-        this.listDelete=[]
+          this.load();
+          this.listUpdate=[]
+          this.listDelete=[]
         }else{
           this.validateVarian='danger'
           this.messageValidate=resp.Message

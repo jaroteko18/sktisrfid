@@ -51,11 +51,14 @@ func GetJWE() string {
 	// Instantiate an encrypter using RSA-OAEP with AES128-GCM. An error would
 	// indicate that the selected algorithm(s) are not currently supported.
 	publicKey := &privateKey.PublicKey
-	// fmt.Println("publicKey", publicKey)
+	fmt.Println("publicKey", publicKey)
+	pub_pem, _ := ExportRsaPublicKeyAsPemStr(publicKey)
+	fmt.Println("pub_pem", pub_pem)
 	encrypter, err := NewEncrypter(A128GCM, Recipient{Algorithm: RSA_OAEP, Key: publicKey}, nil)
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	// fmt.Println("encrypter", encrypter)
 
 	// Encrypt a sample plaintext. Calling the encrypter returns an encrypted

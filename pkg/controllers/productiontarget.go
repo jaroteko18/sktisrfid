@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"log"
 	db "sktisrfid/pkg/database"
 	"time"
 )
@@ -39,15 +38,15 @@ func ListProdTarget(data map[string]interface{}) (res []ListProductionTarget) {
 
 	rows, err := db.DB.Query("SELECT RFIDID,PE.EmployeeID,EmployeeNumber,EmployeeName, Plant as LocationCode, "+
 		"[Group] as GroupCode,Unit as UnitCode, ProdCapacity, ProdTarget, PE.UpdatedDate as CreatedDate "+
-		"FROM ExePlantProductionEntryVerification PV "+
-		"INNER JOIN ExePlantProductionEntry PE "+
+		"FROM [SKTIS].[dbo].[ExePlantProductionEntryVerification] PV "+
+		"INNER JOIN [SKTIS].[dbo].[ExePlantProductionEntry] PE "+
 		"ON PV.ProductionEntryCode=PE.ProductionEntryCode "+
-		"INNER JOIN MstRFID MR "+
+		"INNER JOIN [SKTIS].[dbo].[MstRFID] MR "+
 		"ON PE.EmployeeID=MR.EmployeeID "+
 		"WHERE IsFromRFID=1 and IsActive=1 "+
 		"AND ProductionDate=$1 ", payload.ProductionDate)
 	if err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
 		return
 	}
 	for rows.Next() {
@@ -55,14 +54,14 @@ func ListProdTarget(data map[string]interface{}) (res []ListProductionTarget) {
 		err = rows.Scan(&list.RFIDID, &list.EmployeeID, &list.EmployeeNumber, &list.EmployeeName,
 			&list.LocationCode, &list.GroupCode, &list.UnitCode, &list.ProdCapacity, &list.ProdTarget, &list.CreatedDate)
 		if err != nil {
-			log.Fatal(err)
+			// log.Fatal(err)
 			return
 		}
 		res = append(res, list)
 	}
 	err = rows.Err()
 	if err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
 		return
 	}
 	return
@@ -73,7 +72,7 @@ func UpdateDeleteRFIDProductionTarget(data map[string]interface{}) (res Response
 	var payload PayloadUpdateDelete
 	ParamUpdate, _ := json.Marshal(data["update"])
 	if err := json.Unmarshal(ParamUpdate, &payload.update); err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
 		res.Status = "error"
 		res.Message = err.Error()
 		return
@@ -81,7 +80,7 @@ func UpdateDeleteRFIDProductionTarget(data map[string]interface{}) (res Response
 
 	ParamDelete, _ := json.Marshal(data["delete"])
 	if err := json.Unmarshal(ParamDelete, &payload.delete); err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
 		res.Status = "error"
 		res.Message = err.Error()
 		return
@@ -90,10 +89,10 @@ func UpdateDeleteRFIDProductionTarget(data map[string]interface{}) (res Response
 	if payload.delete != nil {
 		for i := 0; i < len(payload.delete); i++ {
 
-			_, err := db.DB.Query("EXEC UPDATE_PRODUCTION_ENTRY_RFID @EmployeeID = $1 ,@ProdTarget = $2, @CreatedDate = $3, @ProductionDate = $4, @UpdatedBy = $5, @Mode = $6", payload.delete[i].EmployeeID, payload.delete[i].ProdTarget, payload.delete[i].CreatedDate, payload.delete[i].ProductionDate, "RFID", "DELETE")
+			_, err := db.DB.Query("EXEC [SKTIS].[dbo].[UPDATE_PRODUCTION_ENTRY_RFID] @EmployeeID = $1 ,@ProdTarget = $2, @CreatedDate = $3, @ProductionDate = $4, @UpdatedBy = $5, @Mode = $6", payload.delete[i].EmployeeID, payload.delete[i].ProdTarget, payload.delete[i].CreatedDate, payload.delete[i].ProductionDate, "RFID", "DELETE")
 
 			if err != nil {
-				log.Fatal(err)
+				// log.Fatal(err)
 				res.Status = "error"
 				res.Message = err.Error()
 				return
@@ -104,10 +103,10 @@ func UpdateDeleteRFIDProductionTarget(data map[string]interface{}) (res Response
 
 	if payload.update != nil {
 		for i := 0; i < len(payload.update); i++ {
-			_, err := db.DB.Query("EXEC UPDATE_PRODUCTION_ENTRY_RFID @EmployeeID = $1 ,@ProdTarget = $2, @CreatedDate = $3, @ProductionDate = $4, @UpdatedBy = $5, @Mode = $6", payload.update[i].EmployeeID, payload.update[i].ProdTarget, payload.update[i].CreatedDate, payload.update[i].ProductionDate, "RFID", "UPDATE")
+			_, err := db.DB.Query("EXEC [SKTIS].[dbo].[UPDATE_PRODUCTION_ENTRY_RFID] @EmployeeID = $1 ,@ProdTarget = $2, @CreatedDate = $3, @ProductionDate = $4, @UpdatedBy = $5, @Mode = $6", payload.update[i].EmployeeID, payload.update[i].ProdTarget, payload.update[i].CreatedDate, payload.update[i].ProductionDate, "RFID", "UPDATE")
 
 			if err != nil {
-				log.Fatal(err)
+				// log.Fatal(err)
 				res.Status = "error"
 				res.Message = err.Error()
 				return

@@ -62,8 +62,8 @@
           <button type="submit"  class="btn btn-primary">Enter</button>
         </small>
 
-        <h3>{{message}}</h3>
-        <button @click="getMessage">Press Me!</button>
+        <!-- <h3>{{message}}</h3>
+        <button @click="getMessage">Press Me!</button> -->
       </form>
     </div>
   </div>

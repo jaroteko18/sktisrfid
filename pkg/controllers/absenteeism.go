@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	db "sktisrfid/pkg/database"
 	"time"
@@ -47,27 +48,30 @@ func ListAbsent(data map[string]interface{}) (res []ListAbsenteeism) {
 
 	rows, err := db.DB.Query("select RFIDID,EP.EmployeeID,EmployeeNumber,EmployeeName, "+
 		"Plant as LocationCode,[Group] as GroupCode,Unit as UnitCode,EP.CreatedDate "+
-		"from ExePlantWorkerAbsenteeism EP "+
-		"inner join MstRFID MR "+
+		"from [SKTIS].[dbo].[ExePlantWorkerAbsenteeism] EP "+
+		"inner join [SKTIS].[dbo].[MstRFID] MR "+
 		"on EP.EmployeeID=MR.EmployeeID "+
 		"Where IsActive=1 and IsFromRFID=1 "+
 		"and AbsentType=$1 and StartDateAbsent>=$2 and EndDateAbsent<=$2;", payload.AbsentType, payload.AbsentDate)
 	if err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
+		fmt.Println(err)
 		return
 	}
 	for rows.Next() {
 		list := ListAbsenteeism{}
 		err = rows.Scan(&list.RFIDID, &list.EmployeeID, &list.EmployeeNumber, &list.EmployeeName, &list.LocationCode, &list.GroupCode, &list.UnitCode, &list.CreatedDate)
 		if err != nil {
-			log.Fatal(err)
+			// log.Fatal(err)
+			fmt.Println(err)
 			return
 		}
 		res = append(res, list)
 	}
 	err = rows.Err()
 	if err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
+		fmt.Println(err)
 		return
 	}
 	return
@@ -96,7 +100,7 @@ func InsertDeleteAbsent(data map[string]interface{}) (res ResponseResult) {
 	if payload.delete != nil {
 		for i := 0; i < len(payload.delete); i++ {
 
-			_, err := db.DB.Query("EXEC DELETE_WORKER_ABSENTEEISM_RFID @AbsentDate = $1 ,@AbsentType = $2, @RFIDID = $3, @EmployeeID = $4, @CreatedDate = $5, @CreatedBy = $6, @UpdatedBy = $7, @UpdatedDate = $8", payload.delete[i].AbsentDate, payload.delete[i].AbsentType, payload.delete[i].RFIDID, payload.delete[i].EmployeeID, payload.delete[i].CreatedDate, "RFID", "RFID", payload.delete[i].CreatedDate)
+			_, err := db.DB.Query("EXEC [SKTIS].[dbo].[DELETE_WORKER_ABSENTEEISM_RFID] @AbsentDate = $1 ,@AbsentType = $2, @RFIDID = $3, @EmployeeID = $4, @CreatedDate = $5, @CreatedBy = $6, @UpdatedBy = $7, @UpdatedDate = $8", payload.delete[i].AbsentDate, payload.delete[i].AbsentType, payload.delete[i].RFIDID, payload.delete[i].EmployeeID, payload.delete[i].CreatedDate, "RFID", "RFID", payload.delete[i].CreatedDate)
 
 			if err != nil {
 				log.Fatal(err)
@@ -111,7 +115,7 @@ func InsertDeleteAbsent(data map[string]interface{}) (res ResponseResult) {
 
 	if payload.insert != nil {
 		for i := 0; i < len(payload.insert); i++ {
-			_, err := db.DB.Query("EXEC INSERT_WORKER_ABSENTEEISM_RFID @AbsentDate = $1 ,@AbsentType = $2, @RFIDID = $3, @EmployeeID = $4, @CreatedDate = $5, @CreatedBy = $6, @UpdatedBy = $7, @UpdatedDate = $8", payload.insert[i].AbsentDate, payload.insert[i].AbsentType, payload.insert[i].RFIDID, payload.insert[i].EmployeeID, payload.insert[i].CreatedDate, "RFID", "RFID", payload.insert[i].CreatedDate)
+			_, err := db.DB.Query("EXEC [SKTIS].[dbo].[INSERT_WORKER_ABSENTEEISM_RFID] @AbsentDate = $1 ,@AbsentType = $2, @RFIDID = $3, @EmployeeID = $4, @CreatedDate = $5, @CreatedBy = $6, @UpdatedBy = $7, @UpdatedDate = $8", payload.insert[i].AbsentDate, payload.insert[i].AbsentType, payload.insert[i].RFIDID, payload.insert[i].EmployeeID, payload.insert[i].CreatedDate, "RFID", "RFID", payload.insert[i].CreatedDate)
 
 			if err != nil {
 				log.Fatal(err)
