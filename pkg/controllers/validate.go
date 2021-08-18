@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	db "sktisrfid/pkg/database"
 	"time"
@@ -60,36 +61,54 @@ func ValidateItem(data map[string]interface{}) (res ResponseValidate) {
 		res.Message = "Data not found !"
 		res.Status = "error"
 		res.Data = DetailRFID{}
+		fmt.Println("MASOK 1")
 		return
 	}
+	fmt.Println(listMst.EmployeeID)
 
 	list := DetailRFID{}
-	err = db.DB.QueryRow("select EP.EmployeeID,EmployeeNumber,EmployeeName, "+
-		"Plant as LocationCode,[Group] as GroupCode,Unit as UnitCode,null as ProdCapacity,null as ProdTarget "+
+	err = db.DB.QueryRow("select RFIDID,EP.EmployeeID,EmployeeNumber,EmployeeName, "+
+		"Plant as LocationCode,[Group] as GroupCode,Unit as UnitCode,1 as ProdCapacity,1 as ProdTarget "+
 		"from ExePlantWorkerAbsenteeism EP "+
-		"Where IsFromRFID=1 and EP.EmployeeID=$2 "+
-		"and AbsentType='Alpa' and StartDateAbsent>=$1 and EndDateAbsent<=$1 "+
+		"INNER JOIN MstRFID MR "+
+		"ON EP.EmployeeID=MR.EmployeeID "+
+		"Where EP.EmployeeID=$2 and IsActive=1 "+
+		"and StartDateAbsent>=$1 and EndDateAbsent<=$1 "+
 		"UNION ALL "+
-		"SELECT PE.EmployeeID,EmployeeNumber,EmployeeName, Plant as LocationCode, "+
-		"[Group] as GroupCode,Unit as UnitCode, ProdCapacity, ProdTarget "+
+		"SELECT RFIDID,PE.EmployeeID,EmployeeNumber,EmployeeName, Plant as LocationCode, "+
+		"[Group] as GroupCode,Unit as UnitCode, ProdCapacity, COALESCE(ProdTarget,'') AS ProdTarget  "+
 		"FROM ExePlantProductionEntryVerification PV "+
 		"INNER JOIN ExePlantProductionEntry PE "+
 		"ON PV.ProductionEntryCode=PE.ProductionEntryCode "+
-		"WHERE IsFromRFID=1 and EP.EmployeeID=$2 "+
+		"INNER JOIN MstRFID MR "+
+		"ON PE.EmployeeID=MR.EmployeeID "+
+		"WHERE PE.EmployeeID=$2 and IsActive=1 "+
 		"AND ProductionDate=$1 ", payload.Date, listMst.EmployeeID).Scan(&list.RFIDID, &list.EmployeeID,
 		&list.EmployeeNumber, &list.EmployeeName, &list.LocationCode, &list.GroupCode,
 		&list.UnitCode, &list.ProdCapacity, &list.ProdTarget)
 	if err != nil {
 		// data not found
 		if payload.AbsentType == "ProductionTarget" {
+			fmt.Println("MASOK 2", err)
 			res.Message = "Data not found !"
 			res.Status = "error"
 			return
 		}
 	} else {
-		res.Message = "Data exist !"
-		res.Status = "error"
-		return
+		if payload.AbsentType == "ProductionTarget" {
+			fmt.Println("MASOK 3")
+			fmt.Println(list.ProdTarget)
+			if list.ProdTarget != 0 {
+				fmt.Println("MASOK 4")
+				res.Message = "Data exist !"
+				res.Status = "error"
+				return
+			}
+		} else {
+			res.Message = "Data exist !"
+			res.Status = "error"
+			return
+		}
 	}
 	res.Message = "Data was successfully validated !"
 	res.Status = "success"

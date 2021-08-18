@@ -344,23 +344,42 @@ export default {
         update: this.listUpdate,
         delete:this.listDelete
       };
-      axios({
-        url: 'http://localhost:9090/RFIDAPI/UpdateDeleteProductionTarget',
-        method: 'post',
-        data: payload
-      }).then(resp => {
+
+      window.backend.RFID.RFIDProductionTarget(payload).then(resp => {
+        if(resp.Status=="success"){
         this.hasSubmitted=false
 
         this.validateVarian='success'
-        this.messageValidate='Data was successfully saved !'
+        this.messageValidate=resp.Message
         this.dismissCountDown = this.dismissSecs
 
         this.load();
         this.listUpdate=[]
         this.listDelete=[]
-      }).catch(function (error) {
-        console.log(error);
+        }else{
+          this.validateVarian='danger'
+          this.messageValidate=resp.Message
+          this.dismissCountDown = this.dismissSecs
+        }
       });
+
+      // axios({
+      //   url: 'http://localhost:9090/RFIDAPI/UpdateDeleteProductionTarget',
+      //   method: 'post',
+      //   data: payload
+      // }).then(resp => {
+      //   this.hasSubmitted=false
+
+      //   this.validateVarian='success'
+      //   this.messageValidate=resp.Message
+      //   this.dismissCountDown = this.dismissSecs
+
+      //   this.load();
+      //   this.listUpdate=[]
+      //   this.listDelete=[]
+      // }).catch(function (error) {
+      //   console.log(error);
+      // });
     }
 
   }

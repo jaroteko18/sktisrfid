@@ -218,7 +218,6 @@ export default {
         AbsentType: this.$route.params.absenttype 
       }
       window.backend.RFID.GetListAbsenteeism(params).then(result => {
-        console.log(result)
         if(result != null){
           this.list = result
           this.totalRows = (result == null)?this.totalRows:this.list.length
@@ -241,7 +240,6 @@ export default {
           this.listValidate=resp.Data
           this.listInsert.push(this.listValidate)
           this.list.unshift(this.listValidate)
-          console.log(this.list)
           this.validateVarian='info'
           this.messageValidate='RFID '+resp.Data.RFIDID+' - '+resp.Data.EmployeeName
           this.dismissCountDown = this.dismissSecs
@@ -259,23 +257,24 @@ export default {
         insert: this.listInsert,
         delete:this.listDelete
       };
-      axios({
-        url: 'http://localhost:9090/RFIDAPI/InsertDeleteRFIDAbsenteeism',
-        method: 'post',
-        data: payload
-      }).then(resp => {
-        this.hasSubmitted=false
 
-        this.validateVarian='success'
-        this.messageValidate='Data was successfully saved !'
-        this.dismissCountDown = this.dismissSecs
-        
-        this.load();
-        this.listInsert=[]
-        this.listDelete=[]
-        
-      }).catch(function (error) {
-        console.log(error);
+      window.backend.RFID.RFIDAbsenteeism(payload).then(resp => {
+        console.log(resp)
+        if(resp.Status=="success"){
+          this.hasSubmitted=false
+
+          this.validateVarian='success'
+          this.messageValidate=resp.Message
+          this.dismissCountDown = this.dismissSecs
+          
+          this.load();
+          this.listInsert=[]
+          this.listDelete=[]
+        }else{
+          this.validateVarian='danger'
+          this.messageValidate=resp.Message
+          this.dismissCountDown = this.dismissSecs
+        }
       });
     }
 

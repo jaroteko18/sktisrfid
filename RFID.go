@@ -41,11 +41,11 @@ func (t *RFID) GetListAbsenteeism(data map[string]interface{}) []ListAbsenteeism
 	return ListAbsent(data)
 }
 
-func (t *RFID) RFIDProductionTarget(data map[string]interface{}) string {
+func (t *RFID) RFIDProductionTarget(data map[string]interface{}) ResponseResult {
 	return UpdateDeleteRFIDProductionTarget(data)
 }
 
-func (t *RFID) RFIDAbsenteeism(data map[string]interface{}) string {
+func (t *RFID) RFIDAbsenteeism(data map[string]interface{}) ResponseResult {
 	return InsertDeleteAbsent(data)
 }
 
