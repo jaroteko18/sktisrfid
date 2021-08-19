@@ -125,7 +125,7 @@ export default {
   data() {
     return {
       hasSubmitted:false,
-      target:'',
+      target:null,
       targetState: null,
       dismissSecs: 5,
       dismissCountDown: 0,
@@ -162,7 +162,7 @@ export default {
         GroupCode:'',
         UnitCode:'',
         ProdCapacity:'',
-        ProdTarget:'',
+        ProdTarget:null,
         CreatedDate: moment().format('YYYY-MM-DD hh:mm:ss')
       },
       list: [],
@@ -177,7 +177,6 @@ export default {
   },
   mounted:function() {
     this.load();
-    
     Wails.Events.On("rfid", rfid => {
       if (rfid) {
         this.form.RFIDID=rfid.id
@@ -187,7 +186,6 @@ export default {
           this.messageValidate='Data already exist !'
           this.dismissCountDown = this.dismissSecs
         }else{
-          
           this.validate()
         }
         
@@ -202,7 +200,7 @@ export default {
       return valid
     },
     resetModal() {
-      this.target = ''
+      this.target = null
       this.targetState = null
     },
     handleOk(bvModalEvt) {
@@ -216,24 +214,26 @@ export default {
       if (!this.checkFormValidity()) {
         return
       }
-      
-      this.listValidate.ProdTarget = this.target
+      console.log(this.target)
+      console.log(parseFloat(this.target))
+      this.listValidate.ProdTarget = parseFloat(this.target)
       this.listUpdate.push(this.listValidate)
       this.list.unshift(this.listValidate)
       
       this.validateVarian='info'
       this.messageValidate='RFID '+this.listValidate.RFIDID+' - '+this.listValidate.EmployeeName
       this.dismissCountDown = this.dismissSecs
-
       // Hide the modal manually
       this.$nextTick(() => {
         this.$bvModal.hide('modal-prevent-closing')
       })
+      this.totalRows = this.list.length  
     },
     handleDelete(item) {
       item.ProductionDate = this.$route.params.period,
       this.listDelete.push(item)
       this.deleteFromList(item.RFIDID)
+      this.totalRows = this.list.length
     },
     deleteFromList(key){
       for (let [i, item] of this.listUpdate.entries()) {
@@ -273,18 +273,8 @@ export default {
       var params = {
         ProductionDate: this.$route.params.period
       }
-      // === BEFORE
-      // axios.get('http://localhost:9090/id/RFIDAPI/GetListProductionTarget',{
-      //   params: {
-      //     ProductionDate: this.$route.params.period
-      //   }
-      // }).then(resp => {
-      //   this.list = resp.data.data
-      //   this.totalRows = this.list.length
-      //   this.toggleBusy()
-      // })
-      // === AFTER
       window.backend.RFID.GetListProductionTarget(params).then(result => {
+        console.log(result)
         if(result != null){
           this.list = result
           this.totalRows = (result == null)?this.totalRows:this.list.length
@@ -300,39 +290,21 @@ export default {
           RFIDID: this.form.RFIDID
         }
       window.backend.RFID.ValidateRFID(params).then(resp => {
+        
        if(resp.Status=="success"){
+          console.log(resp.Data)
           this.$bvModal.show('modal-prevent-closing')
 
           resp.Data.CreatedDate = moment().format('YYYY-MM-DD hh:mm:ss')
           resp.Data.ProductionDate = this.$route.params.period
           this.listValidate=resp.Data
+          
         }else{
           this.validateVarian='danger'
           this.messageValidate=resp.Message
           this.dismissCountDown = this.dismissSecs
         }
       });
-
-      // axios.get('http://localhost:9090/id/RFIDAPI/ValidateRFID',{
-      //   params: {
-      //     Date: this.$route.params.period,
-      //     AbsentType: 'ProductionTarget', 
-      //     RFIDID: this.form.RFIDID
-      //   }
-      // }).then(resp => {
-      //   if(resp.data.status=="success"){
-      //     this.$bvModal.show('modal-prevent-closing')
-
-      //     resp.data.data.CreatedDate = moment().format('YYYY-MM-DD hh:mm:ss')
-      //     resp.data.data.ProductionDate = this.$route.params.period
-      //     this.listValidate=resp.data.data
-      //   }else{
-      //     this.validateVarian='danger'
-      //     this.messageValidate=resp.data.message
-      //     this.dismissCountDown = this.dismissSecs
-      //   }
-      // })
-      
       
       
     },
@@ -344,9 +316,9 @@ export default {
         update: this.listUpdate,
         delete:this.listDelete
       };
-
       console.log(payload)
       window.backend.RFID.RFIDProductionTarget(payload).then(resp => {
+        
         if(resp.Status=="success"){
           this.hasSubmitted=false
 
@@ -358,29 +330,13 @@ export default {
           this.listUpdate=[]
           this.listDelete=[]
         }else{
+          this.hasSubmitted=false
           this.validateVarian='danger'
           this.messageValidate=resp.Message
           this.dismissCountDown = this.dismissSecs
         }
       });
 
-      // axios({
-      //   url: 'http://localhost:9090/RFIDAPI/UpdateDeleteProductionTarget',
-      //   method: 'post',
-      //   data: payload
-      // }).then(resp => {
-      //   this.hasSubmitted=false
-
-      //   this.validateVarian='success'
-      //   this.messageValidate=resp.Message
-      //   this.dismissCountDown = this.dismissSecs
-
-      //   this.load();
-      //   this.listUpdate=[]
-      //   this.listDelete=[]
-      // }).catch(function (error) {
-      //   console.log(error);
-      // });
     }
 
   }

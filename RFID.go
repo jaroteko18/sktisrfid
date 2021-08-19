@@ -55,7 +55,7 @@ func (t *RFID) WailsInit(runtime *wails.Runtime) error {
 	t.logger = t.runtime.Log.New("RFID")
 	t.logger.Info("I'm here")
 
-	t.runtime.Window.SetTitle("SKTISRFID")
+	// t.runtime.Window.SetTitle("SKTISRFID")
 	return nil
 }
 

@@ -17,7 +17,7 @@ type PayloadProductionTarget struct {
 	CreatedDate    string
 	RFIDID         string
 	EmployeeID     string
-	ProdTarget     string
+	ProdTarget     float32
 }
 
 type ListProductionTarget struct {
@@ -38,16 +38,17 @@ func ListProdTarget(data map[string]interface{}) (res []ListProductionTarget) {
 	payload.ProductionDate = data["ProductionDate"].(string)
 
 	rows, err := db.DB.Query("SELECT RFIDID,PE.EmployeeID,EmployeeNumber,EmployeeName, Plant as LocationCode, "+
-		"[Group] as GroupCode,Unit as UnitCode, ProdCapacity, ProdTarget, PE.UpdatedDate as CreatedDate "+
+		"[Group] as GroupCode,Unit as UnitCode, COALESCE(ProdCapacity,0) AS ProdCapacity, COALESCE(ProdTarget,0) AS ProdTarget, PE.UpdatedDate as CreatedDate "+
 		"FROM [SKTIS].[dbo].[ExePlantProductionEntryVerification] PV "+
 		"INNER JOIN [SKTIS].[dbo].[ExePlantProductionEntry] PE "+
 		"ON PV.ProductionEntryCode=PE.ProductionEntryCode "+
 		"INNER JOIN [SKTIS].[dbo].[MstRFID] MR "+
 		"ON PE.EmployeeID=MR.EmployeeID "+
 		"WHERE IsFromRFID=1 and IsActive=1 "+
-		"AND ProductionDate=$1 ", payload.ProductionDate)
+		"AND ProductionDate=$1 ORDER BY PE.UpdatedDate DESC", payload.ProductionDate)
 	if err != nil {
 		// log.Fatal(err)
+		fmt.Println(err)
 		return
 	}
 	for rows.Next() {
@@ -56,6 +57,7 @@ func ListProdTarget(data map[string]interface{}) (res []ListProductionTarget) {
 			&list.LocationCode, &list.GroupCode, &list.UnitCode, &list.ProdCapacity, &list.ProdTarget, &list.CreatedDate)
 		if err != nil {
 			// log.Fatal(err)
+			fmt.Println(err)
 			return
 		}
 		res = append(res, list)
@@ -63,6 +65,7 @@ func ListProdTarget(data map[string]interface{}) (res []ListProductionTarget) {
 	err = rows.Err()
 	if err != nil {
 		// log.Fatal(err)
+		fmt.Println(err)
 		return
 	}
 	return

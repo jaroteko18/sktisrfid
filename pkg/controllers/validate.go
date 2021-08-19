@@ -76,7 +76,7 @@ func ValidateItem(data map[string]interface{}) (res ResponseValidate) {
 		"and StartDateAbsent>=$1 and EndDateAbsent<=$1 "+
 		"UNION ALL "+
 		"SELECT RFIDID,PE.EmployeeID,EmployeeNumber,EmployeeName, Plant as LocationCode, "+
-		"[Group] as GroupCode,Unit as UnitCode, ProdCapacity, COALESCE(ProdTarget,'') AS ProdTarget  "+
+		"[Group] as GroupCode,Unit as UnitCode, COALESCE(ProdCapacity,0) AS ProdCapacity, COALESCE(ProdTarget,0) AS ProdTarget  "+
 		"FROM [SKTIS].[dbo].[ExePlantProductionEntryVerification] PV "+
 		"INNER JOIN [SKTIS].[dbo].[ExePlantProductionEntry] PE "+
 		"ON PV.ProductionEntryCode=PE.ProductionEntryCode "+

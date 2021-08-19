@@ -177,6 +177,7 @@ export default {
       item.AbsentType = this.$route.params.absenttype 
       this.listDelete.push(item)
       this.deleteFromList(item.RFIDID)
+      this.totalRows = this.list.length
     },
     deleteFromList(key){
       for (let [i, item] of this.listInsert.entries()) {
@@ -218,6 +219,7 @@ export default {
         AbsentType: this.$route.params.absenttype 
       }
       window.backend.RFID.GetListAbsenteeism(params).then(result => {
+        console.log(result)
         if(result != null){
           this.list = result
           this.totalRows = (result == null)?this.totalRows:this.list.length
@@ -234,6 +236,7 @@ export default {
       }
       window.backend.RFID.ValidateRFID(params).then(resp => {
         if(resp.Status=="success"){
+          console.log(resp.Data)
           resp.Data.CreatedDate = moment().format('YYYY-MM-DD hh:mm:ss')
           resp.Data.AbsentDate = this.$route.params.period
           resp.Data.AbsentType = this.$route.params.absenttype 
@@ -243,6 +246,7 @@ export default {
           this.validateVarian='info'
           this.messageValidate='RFID '+resp.Data.RFIDID+' - '+resp.Data.EmployeeName
           this.dismissCountDown = this.dismissSecs
+          this.totalRows = this.list.length
         }else{
           this.validateVarian='danger'
           this.messageValidate=resp.Message
@@ -257,9 +261,8 @@ export default {
         insert: this.listInsert,
         delete:this.listDelete
       };
-
+      console.log(payload)
       window.backend.RFID.RFIDAbsenteeism(payload).then(resp => {
-        console.log(resp)
         if(resp.Status=="success"){
           this.hasSubmitted=false
 
@@ -271,6 +274,7 @@ export default {
           this.listInsert=[]
           this.listDelete=[]
         }else{
+          this.hasSubmitted=false
           this.validateVarian='danger'
           this.messageValidate=resp.Message
           this.dismissCountDown = this.dismissSecs
