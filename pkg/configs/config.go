@@ -23,6 +23,13 @@ type Config struct {
 // JSON Web Encryption (RFC 7516)
 func GetJWE() string {
 	fmt.Println("================= START TEST RSA")
+	var username string
+	username, err := os.Hostname()
+	if err != nil {
+		username = "RFID"
+	}
+
+	fmt.Println("hostname:", username)
 	// // Generate a public/private key pair to use for this example.
 
 	// Create the keys
@@ -181,8 +188,8 @@ func ParseRsaPublicKeyFromPemStr(pubPEM string) (*rsa.PublicKey, error) {
 }
 
 func GetConfig() Config {
-	// JWE := GetJWE()
-	// fmt.Println("JWE", JWE)
+	JWE := GetJWE()
+	fmt.Println("JWE", JWE)
 	// file, _ := os.Open("//pmiidsubdev33/invdashboard$/rfid/config.json")
 	file, _ := os.Open("config.json")
 	defer file.Close()
